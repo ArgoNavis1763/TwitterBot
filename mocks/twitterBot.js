@@ -10,11 +10,10 @@ export const OBAMA_DATA = {
     username: "Barack Obama",
     location: "Washington, DC",
     id: "813286",
-    friends: 75,
   },
 };
 
-export const TWEET_DATA = {
+export const OBAMA_TWEETS = {
   data: {
     id: "1512159547842048011",
     text: "Congratulations to Judge Ketanji Brown Jackson for her appointment to the Supreme Court. This is a great day for America, and a proud moment in our history. https://t.co/q4C9dtKAqb",

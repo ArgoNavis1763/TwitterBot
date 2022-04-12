@@ -1,8 +1,33 @@
 import axios from "axios";
+import qs from "qs";
 
 export default class TwitterBot {
-  constructor() {
+  constructor(authCode) {
     this.url = "https://api.twitter.com/2";
+    this.accessToken = getAccessToken(authCode);
+  }
+
+  async getAccessToken(authCode = "") {
+    try {
+      const response = await axios.post(
+        "https://api.twitter.com/2/oauth2/token",
+        qs.stringify({
+          code: authCode,
+          grant_type: "authorization_code",
+          client_id: process.env.CLIENT_ID,
+          redirect_uri: "https://www.example.com",
+          code_verifier: "challenge",
+        }),
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        }
+      );
+      return response.data.accessToken;
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async fetchTwitterAccount(username = "BarackObama") {
@@ -60,25 +85,137 @@ export default class TwitterBot {
           },
         }
       );
-      const tweets = response.data;
+      const tweets = response;
       return tweets;
     } catch (error) {
       throw new Error("Something went wrong when fetching liked tweets");
     }
   }
 
-  // function doesn't work but test does url
-  async fetchFriends(id = "813286") {
+  // not sure how to set up url, or locate friends list etc
+  async fetchFollowing(userid = "813286") {
     try {
-      const response = await axios.get(`${this.url}/users/`, {
-        header: {
+      const response = await axios.get(
+        `${this.url}/users/${userid}/following`,
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.API_BEARER_TOKEN}`,
+          },
+        }
+      );
+      const metrics = response.public_metrics;
+      return metrics;
+    } catch (error) {
+      throw new Error("Something went wrong when fetching friends list");
+    }
+  }
+
+  //not sure how to get response of retweeted = true / post tweet data
+  async postRetweet(userid = "1216634215", tweetid = "1512159547842048011") {
+    try {
+      const response = await axios.post(
+        `${this.url}/users/${userid}/retweets`,
+        { tweet_id: `${tweetid}` },
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.API_BEARER_TOKEN}`,
+          },
+        }
+      );
+      const success = response.data;
+      return success;
+    } catch (error) {
+      throw new Error("Cannot retweet");
+    }
+  }
+
+  //same as above
+  async postLike(userid = "1216634215", tweetid = "1512159547842048011") {
+    try {
+      const response = await axios.post(
+        `${this.url}/users/${userid}/likes`,
+        { tweet_id: `${tweetid}` },
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.API_BEARER_TOKEN}`,
+          },
+        }
+      );
+      const success = response.data;
+      return success;
+    } catch (error) {
+      throw new Error("Cannot like");
+    }
+  }
+
+  //same as above
+  async postTweet(userid = "1216634215") {
+    try {
+      const response = await axios.post(
+        `${this.url}/tweets`,
+        { text: "hello world" },
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.API_BEARER_TOKEN}`,
+          },
+        }
+      );
+      const success = response.data;
+      return success;
+    } catch (error) {
+      throw new Error("Cannot post tweet");
+    }
+  }
+
+  //same as above
+  async deleteTweet(tweetid = "1512739256074125316") {
+    try {
+      const response = await axios.delete(`${this.url}/tweets`, {
+        headers: {
           Authorization: `Bearer ${process.env.API_BEARER_TOKEN}`,
         },
       });
-      const friends = response.data;
-      return friends;
+      const success = response.data;
+      return success;
     } catch (error) {
-      throw new Error("Something went wrong when fetching friends list");
+      throw new Error("Cannot delete tweet");
+    }
+  }
+
+  //same as above
+  async deleteLike(userid = "1216634215", tweetid = "1512159547842048011") {
+    try {
+      const response = await axios.delete(
+        `${this.url}/users/${userid}/likes${tweetid}`,
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.API_BEARER_TOKEN}`,
+          },
+        }
+      );
+      const success = response.data;
+      return success;
+    } catch (error) {
+      throw new Error("Cannot remove like");
+    }
+  }
+
+  //same as above
+  async deleteRetweet(
+    userid = "1216634215",
+    source_tweetid = "1512159547842048011"
+  ) {
+    try {
+      const response = await axios.delete(
+        `${this.url}/users/${userid}/retweets/${source_tweetid}`,
+        {
+          headers: { Authorization: `Bearer ${process.env.API_BEARER_TOKEN}` },
+        }
+      );
+      const success = response.data;
+      return success;
+    } catch (error) {
+      throw new Error("Cannot remove retweet");
     }
   }
 }

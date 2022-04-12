@@ -34,10 +34,62 @@ const getLikedTweets = async () => {
 
 // getLikedTweets();
 
-const getFriends = async () => {
+const getFollowing = async () => {
   const bot = new TwitterBot();
-  const friends = await bot.fetchFriends();
+  const friends = await bot.fetchFollowing();
   console.log(friends);
 };
 
-// getFriends();
+// getFollowing();
+
+const postRetweet = async () => {
+  const bot = new TwitterBot();
+  const success = await bot.postRetweet();
+  console.log(success);
+};
+
+// postRetweet();
+
+const postLike = async () => {
+  const bot = new TwitterBot();
+  const success = await bot.postLike();
+  console.log(success);
+};
+
+// postLike();
+
+const postTweet = async () => {
+  const bot = new TwitterBot();
+  const success = await bot.postTweet();
+  console.log(success);
+};
+
+// postTweet();
+
+const deleteTweet = async () => {
+  const bot = new TwitterBot();
+  const success = await bot.deleteTweet();
+  console.log(success);
+};
+
+// deleteTweet();
+
+const deleteLike = async () => {
+  const bot = new TwitterBot();
+  const success = await bot.deleteLike();
+  console.log(success);
+};
+
+// deleteLike();
+
+const deleteRetweet = async () => {
+  const bot = new TwitterBot();
+  const success = await bot.deleteRetweet();
+  console.log(success);
+};
+
+// deleteRetweet();
+
+const bot = new TwitterBot(
+  "eWhqay1hWERNU1pFMDZMNFpKQnpIZ1pkb2pNUGROZm1GVldvTmdTNE9BT3BUOjE2NDk3ODk3NTYxOTQ6MToxOmFjOjE"
+);
